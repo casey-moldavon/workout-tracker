@@ -5,6 +5,7 @@ const Workout = require("../models/workout");
 const express = require("express");
 const router = express.Router();
 
+
 router.get("/workouts", (req, res) => {
     Exercise.find({}, function(err, data){
         if (err) {console.log(err)}
