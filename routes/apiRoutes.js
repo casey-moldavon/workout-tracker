@@ -1,37 +1,54 @@
-const dbExercise = require("../models/exercise");
-const dbWorkout = require("../models/workout");
-const db = require("../models");
-
-module.exports = function(app) {
+const Exercise = require("../models/exercise");
+const Workout = require("../models/workout");
 
 
-    app.get("/workouts", function(req, res) {
-        db.exercise.find({})
-        .then(dbWorkout)
+const express = require("express");
+const router = express.Router();
+
+router.get("/workouts", (req, res) => {
+    Exercise.find({}, function(err, data){
+        if (err) {console.log(err)}
+        else {
+            console.log(data);
+            res.send(data);
+        }
     })
-
-    app.post("")
-    db.workout.collection.create(body)    
+});
 
 
-    app.get("/library", (req, res) => {
-        db.Library.find({})
-          .then(dbLibrary => {
-            res.json(dbLibrary);
-          })
-          .catch(err => {
-            res.json(err);
-          });
-      });
-    // app.get("/", function(req, res) {
-    //   res.sendFile(path.join(__dirname, "../public"));
-    // });
-  
-    // app.get("/exercise", function(req, res) {
-    //   res.sendFile(path.join(__dirname, "../public/exercise.html"));
-    // });
-  
-    // app.get("/stats", function(req, res) {
-    //   res.sendFile(path.join(__dirname, "../public/stats.html"));
-    // });
-  };
+
+
+router.post("/workouts", (req, res) => {
+    const newWorkout = new Workout({
+        date: req.body.date,
+        exercises: req.body.exercises
+    });
+    newWorkout.save();
+
+    res.json(newWorkout);
+});
+
+
+router.put("/workouts/:id", (req, res) => {
+
+    const newExercise = new Exercise({
+        type: req.body.type,
+        name: req.body.name,
+        duration: req.body.duration,
+        weight: req.body.duration,
+        reps: req.body.reps,
+        sets: req.body.sets
+    });
+    newExercise.save();
+    res.json(newExercise);
+    
+    Workout.findById(req.params.id, function(err, workout) {
+
+            workout.exercises.push(newExercise.id);
+            workout.save();
+            res.json(workout);
+    });
+});
+
+
+module.exports = router;
