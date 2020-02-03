@@ -16,8 +16,6 @@ router.get("/workouts", (req, res) => {
 });
 
 
-
-
 router.post("/workouts", (req, res) => {
     const newWorkout = new Workout({
         date: req.body.date,
