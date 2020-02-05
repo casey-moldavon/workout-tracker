@@ -35,7 +35,7 @@ I wish i could give a more detailed walkthrough of the process to solve the issu
 ​
 ## Deployed Link
 ​
-* [See Live Site]()
+* [See Live Site](https://exercise-app-backend-repair.herokuapp.com/)
 ​
 ​
 ## Authors
