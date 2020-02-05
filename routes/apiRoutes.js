@@ -6,24 +6,38 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/workouts", (req, res) => {
-    Exercise.find({}, function(err, data){
+    Workout.find({}, function(err, data){
         console.log("Bloop Attack!")
         if (err) {console.log(err)}
         else {
-            console.log(data);
+            console.log('all workouts',data);
             res.send(data);
         }
     })
 });
 
 
+// client does not provide Range! XP
+router.get("/workouts/range", (req, res) => {
+    Workout.find({}).populate('exercises').exec(function(err, data){
+        console.log("Range of workouts")
+        if (err) {console.log(err)}
+        else {
+            console.log('range of workouts',data);
+            res.send(data);
+        }
+    })
+});
+
+
+
 router.post("/workouts", (req, res) => {
     const newWorkout = new Workout({
-        date: req.body.date,
-        exercises: req.body.exercises
+        totalDuration: 0,
+        exercises: []
     });
     newWorkout.save();
-    // console.log(newWorkout);
+    console.log('new workout',newWorkout);
 
     res.json(newWorkout);
 });
@@ -35,27 +49,29 @@ router.put("/workouts/:id", (req, res) => {
         type: req.body.type,
         name: req.body.name,
         duration: req.body.duration,
+        distance: req.body.distance,
         weight: req.body.weight,
         reps: req.body.reps,
         sets: req.body.sets
     });
-    newExercise.save();
-
-    // console.log(newExercise);
-
-    console.log(req.params.id);
-    res.json(newExercise);
+    newExercise.save().then(savingResponse => {
+        // console.log(newExercise);
     
-    Workout.findById(req.params.id, function(err, workout) {
-        console.log(workout);
-
+        console.log('saved new exercise, creating workout',req.params.id);
+        // res.json(newExercise);
+        
+        Workout.findById(req.params.id, function(err, workout) {
+            console.log(workout);
+    
             workout.exercises.push(newExercise.id);
+            workout.totalDuration += newExercise.duration;
             console.log(newExercise);
-
+    
             workout.save();
             
             console.log(workout);
-            res.json(workout);
+            res.json(newExercise);
+        });
     });
 });
 
